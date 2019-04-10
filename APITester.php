@@ -74,8 +74,8 @@ $data = array(
 
     //
     "authorships"=> array(
-      array("person"=>"Fake Person", "display_order"=>"1", "is_corresponding_author"=>false, 'role'=>'Author'),
-      array("person"=>"Another Fake Person", "display_order"=>"2", "is_corresponding_author"=>true, 'role'=>'Author'),
+      array("person"=>"Fake Person", "displayOrder"=>"1", "isCorrespondingAuthor"=>false, 'role'=>'Author'),
+      array("person"=>"Another Fake Person", "displayOrder"=>"2", "isCorrespondingAuthor"=>true, 'role'=>'Author'),
     ),
 
     // the following fields use a controlled vocabulary, so their values must exist in the database
@@ -105,7 +105,7 @@ $data = array(
     "data_types" => array(
       "Surveys",
     ),
-    "data_collection_instruments"=> array(
+    "data_collection_standards"=> array(
       "American College of Radiology/ National Electrical Manufacturers Association 2.0 (ACR/NEMA 2.0)"
     ),
     "awards" => array(
@@ -141,7 +141,7 @@ $data = array(
   );
 
 
-$response = $client->request('POST', 'api/Dataset', [
+$response = $client->request('POST', 'api/dataset', [
   'headers' => [
     'X-AUTH-TOKEN' => "FAKE TOKEN", // YOUR API KEY GOES HERE
   ],

@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Form\Type\DatasetViaApiType;
 use AppBundle\Entity\Dataset;
 use AppBundle\Utils\Slugger;
+use AppBundle\Utils\Blacklist;
 
 
 /**
@@ -59,9 +60,9 @@ class APIController extends Controller
    * @Route(
    *   "/api/Dataset/{uid}.{_format}", name="json_output_datasets",
    *   defaults={"uid": "all", "_format":"json"},
-   * ) 
+   * )
    * @Method("GET")
-   */ 
+   */
   public function APIDatasetGetAction($uid, $_format, Request $request) {
 
     $em = $this->getDoctrine()->getManager();
@@ -73,7 +74,17 @@ class APIController extends Controller
                      ->where('d.archived = 0 OR d.archived IS NULL')
                      ->andWhere('d.published = 1')
                      ->getQuery()->getResult();
-    } else {
+    } elseif (substr($uid,0,4)==="all_"){
+        $offset=(int)substr($uid,4);
+        $datasets = $qb->select('d')
+            ->from('AppBundle:Dataset', 'd')
+            ->where('d.archived = 0 OR d.archived IS NULL')
+            ->andWhere('d.published = 1')
+            ->setFirstResult($offset)
+            ->setMaxResults(500)
+            ->getQuery()->getResult();
+    }
+    else {
       $datasets = $qb->select('d')
                      ->from('AppBundle:Dataset', 'd')
                      ->where('d.dataset_uid = :uid')
@@ -107,7 +118,7 @@ class APIController extends Controller
         // default will use the entity's jsonSerialize() method
         $content = $datasets;
     }
-    
+
     if ($_format == "json") {
       $response = new Response();
       $response->setContent(json_encode($content));
@@ -120,7 +131,89 @@ class APIController extends Controller
   }
 
 
-  /** 
+    /**
+     * Produce the JSON output
+     *
+     * @param Request $request The current HTTP request
+     *
+     * @return Response A Response instance
+     *
+     * @Route("/api/word_map")
+     * @Method("GET")
+     */
+    public function APIKeywordsGetAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $qb = $em->createQueryBuilder();
+        $datasets = $qb->select('d')
+            ->from('AppBundle:Dataset', 'd')
+            ->where('d.published = 1')
+            ->andWhere('d.archived = 0 OR d.archived IS NULL')
+            ->getQuery()->getResult();
+
+        $keyword_content = array();
+        $domain_content = array();
+        $last_name_content = array();
+        foreach ($datasets as $dataset) {
+            $keywords = $dataset->getSubjectKeywords()->getValues();
+            $domains = $dataset->getSubjectDomains()->getValues();
+            $authors = $dataset->getAuthors();
+            foreach ($keywords as $keyword) {
+                array_push($keyword_content, $keyword->getKeyword());
+            }
+            foreach ($domains as $domain) {
+                array_push($domain_content, $domain->getSubjectDomain());
+            }
+            $full_name_list = array();
+            foreach ($authors as $author) {
+                array_push($full_name_list, $author->getFullName());
+            }
+            $full_name_list = $this->CleanAuthorList($full_name_list);
+            foreach ($full_name_list as $author) {
+                $author = str_replace(array("MD", "M.D.", "PhD", "MPH", "Jr", "Jr."), "", $author);
+                $name = explode(",", $author)[0];
+                $last_name=explode(" ", $name);
+                $last_name = end($last_name);
+                $last_name=explode(".", $last_name);
+                $last_name = end($last_name);
+                $last_name=explode("-", $last_name);
+                $last_name = end($last_name);
+                array_push($last_name_content, $last_name);
+            }
+        }
+
+        $content = array("keywords" => $keyword_content, "domains" => $domain_content, "lastnames" => $last_name_content);
+        $response = new Response();
+        $response->setContent(json_encode($content));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+    }
+
+    private function CleanAuthorList(array $full_name_list){
+        $author_list = array();
+        $black_list = new Blacklist();
+
+        foreach ($full_name_list as $full_name) {
+            foreach ($author_list as $author) {
+                if (strpos(strtolower($author), strtolower($full_name))) {
+                    continue 2;
+                }
+                if (strpos(strtolower($full_name), strtolower($author))) {
+                    unset($author_list[$author]);
+                    array_push($author_list, $full_name);
+                    continue 2;
+                }
+            }
+
+            if ($black_list->isValid($full_name)) {
+                array_push($author_list, $full_name);
+            }
+        }
+        return $author_list;
+    }
+
+
+  /**
    * Ingest dataset via API
    *
    * @param Request The current HTTP request
@@ -193,7 +286,7 @@ class APIController extends Controller
     }
 
     $userCanSubmit = $this->get('security.context')->isGranted('ROLE_API_SUBMITTER');
-    
+
     //prefix with namespaces so it can be called dynamically
     if (in_array($entityName, $this->personEntities)) {
       $newEntity = 'AppBundle\Entity\\Person';
@@ -204,7 +297,7 @@ class APIController extends Controller
 
     $em = $this->getDoctrine()->getManager();
     if ($userCanSubmit) {
-      $form = $this->createForm(new $newEntityFormType(), 
+      $form = $this->createForm(new $newEntityFormType(),
                                 new $newEntity(),
                                 array('csrf_protection'=>false));
       $form->submit($submittedData);
@@ -215,7 +308,7 @@ class APIController extends Controller
         $addedEntityName = $entity->getDisplayName();
         $slug = Slugger::slugify($addedEntityName);
         $entity->setSlug($slug);
-        
+
         $em->persist($entity);
         $em->flush();
 
@@ -229,12 +322,12 @@ class APIController extends Controller
       }
     } else {
       return new Response('Unauthorized', 401);
-    } 
+    }
   }
 
 
   /**
-   * List related entities 
+   * List related entities
    *
    * @param string $slug The slug of an entity, or "all"
    * @param string $_format The output format desired
@@ -245,9 +338,9 @@ class APIController extends Controller
    * @Route(
    *   "/api/{entityName}/{slug}.{_format}", name="json_output_related",
    *   defaults={"slug": "all", "_format":"json"},
-   * ) 
+   * )
    * @Method("GET")
-   */ 
+   */
   public function APIEntityGetAction($entityName, $slug, $_format, Request $request) {
     if ($entityName == 'User') {
       return new Response('Users cannot be fetched via API', 403);

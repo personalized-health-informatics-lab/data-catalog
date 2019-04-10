@@ -8,7 +8,7 @@
         "classmap": [ "app/AppKernel.php", "app/AppCache.php" ]
     },
     "require": {
-        "php": ">=5.3.9",
+        "php": ">=5.4.1",
         "symfony/symfony": "2.8.*",
         "twig/twig": "~1.28 || ~2.0",
         "doctrine/orm": "^2.4",
@@ -20,7 +20,7 @@
         "sensio/framework-extra-bundle": "^3.0.2",
         "incenteev/composer-parameter-handler": "~2.0",
         "guzzlehttp/guzzle": "^6.3",
-        "doctrine/doctrine-fixtures-bundle": "2.3.0"
+        "symfony/apache-pack": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

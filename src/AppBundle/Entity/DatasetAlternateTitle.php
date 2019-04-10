@@ -36,7 +36,7 @@ class DatasetAlternateTitle {
   protected $id;
 
   /**
-   * @ORM\Column(type="string",length=256)
+   * @ORM\Column(type="string",length=1024)
    */
   protected $alt_title;
 

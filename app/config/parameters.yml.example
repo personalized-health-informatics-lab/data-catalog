@@ -19,7 +19,7 @@ parameters:
   # Set these parameters for your installation so we can use them in our templates
   # Some of this information is used in the Structured Data output
   #
-    site_name: "Generic Data Catalog"
+    site_name: "Digital Commons"
     site_description: "This is a generic description of a generic data catalog."
     site_base_url: "http://www.example.com"
     site_provider_name: "Generic Library or Department that Made the Data Catalog"
@@ -28,10 +28,10 @@ parameters:
     institution_name_short: "Our Institution"
     institution_address: "123 Fake Street, Springfield USA"
     institution_url: "http://www.example.edu"
-    
+
     # Options for the contact form
-    contact_email_to: 
-    contact_email_from: 
+    contact_email_to:
+    contact_email_from:
     institutional_affiliation_options:
       - "Generic School of Medicine"
       - "Generic School of Engineering"
@@ -43,7 +43,7 @@ parameters:
     # Tag to display for local experts (if you want to specify the institution)
     local_expert_display: "Local Expert"
 
-    # Time To Live for temporary access key links (in hours), in PHP DateInterval format  
+    # Time To Live for temporary access key links (in hours), in PHP DateInterval format
     tak_ttl: "+3days"
 
 
@@ -51,8 +51,8 @@ parameters:
   # Technical stuff
   #
     database_driver: pdo_mysql
-    database_name: 
-    database_host: 
+    database_name:
+    database_host:
     database_user:
     database_password:
     database_port:
@@ -61,17 +61,17 @@ parameters:
     mailer_user: null
     mailer_password: null
     locale: en
-    secret: 
+    secret:
     # If you're using LDAP authentication
     ldap.host:
-    ldap.port: 
+    ldap.port:
 
   #
-  # Solr stuff. You mostly want to set the server URL and 
+  # Solr stuff. You mostly want to set the server URL and
   # choose your facets.
   # The other settings are a bit more involved to change.
   #
-    solrsearchr_server: 
+    solrsearchr_server:
     solrsearchr_format: json
     #
     # Comment out any 'solrsearchr_facets' below that
@@ -82,7 +82,7 @@ parameters:
         - subject_domain_fq
         - subject_geographic_area_fq
         - access_restrictions_fq
-    solrsearchr_fields_to_search: 
+    solrsearchr_fields_to_search:
         - _text_
     solrsearchr_fields_to_display:
         - id
@@ -97,4 +97,3 @@ parameters:
         - subject_geographic_area
         - dataset_start_date
         - dataset_end_date
-

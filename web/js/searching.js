@@ -1,6 +1,6 @@
 /**
  *
- *   This file is part of the Data Catalog project, except for the 
+ *   This file is part of the Data Catalog project, except for the
  *   exceptions noted in the comments.
  *   Copyright (C) 2016 NYU Health Sciences Library
  *
@@ -67,14 +67,26 @@ jQuery(function($) {
   /**
    * Handle institution-only filter
    */
-  $('#internal-only-filter-container').on('click', function(e) {
-      var content = "origin_fq:Internal";
-      if ($('#internal-only-filter').attr('checked')) {
-          alterSearch('remove', 'facet', content);
-      } else {
-          alterSearch('add', 'facet', content);
-      }
-
+  $('#internal-only-filter').on('change',function () {
+    if (this.checked) {
+      alterSearch('add', 'facet', 'origin_fq:Internal');
+    } else {
+      alterSearch('remove', 'facet', 'origin_fq:Internal');
+    }
+  });
+  $('#public-only-filter').on('change',function () {
+    if (this.checked) {
+      alterSearch('add', 'facet', 'origin_fq:public');
+    } else {
+      alterSearch('remove', 'facet', 'origin_fq:public');
+    }
+  });
+  $('#trials-only-filter').on('change',function () {
+    if (this.checked) {
+      alterSearch('add', 'facet', 'origin_fq:clinicaltrials');
+    } else {
+      alterSearch('remove', 'facet', 'origin_fq:clinicaltrials');
+    }
   });
 
   /**
@@ -155,11 +167,11 @@ jQuery(function($) {
     var facetChoice = '"' + $(this).attr('data-solrfacetvalue') + '"';
     var facetString = category + ':' + facetChoice;
     //console.log(facetString);
-    alterSearch('add', 'facet', facetString); 
+    alterSearch('add', 'facet', facetString);
     return false;
   });
 
-  
+
 
   /**
    * Pager buttons
@@ -178,7 +190,7 @@ jQuery(function($) {
 
   /**
    * This function does most of the leg work for searching. We chose to do all this with JS
-   * because the search environment is dynamic and the parameters are complex, so we wanted to 
+   * because the search environment is dynamic and the parameters are complex, so we wanted to
    * have the most control over it we could.
    *
    * Basically, you tell this function what you want to do, what parameter to do it to, and what content/data there is
@@ -230,7 +242,7 @@ jQuery(function($) {
         }
       }
     }
-    
+
 
     // Add an item
     if (action=='add') {
@@ -256,8 +268,12 @@ jQuery(function($) {
 
     }
 
-    var newURL = "/search?" + $.param(params);
-    window.location.href = newURL;
+    let prefix = '/search';
+    if (!params['keyword']) {
+      prefix = '/advanced_search';
+    }
+
+    window.location.href = prefix + "?" + $.param(params);
   }
 
 
@@ -294,10 +310,10 @@ jQuery(function($) {
   function getUrlParameter(sParam) {
     var sPageURL = window.location.search.substring(1);
     var sURLVariables = sPageURL.split('&');
-    for (var i = 0; i < sURLVariables.length; i++) 
+    for (var i = 0; i < sURLVariables.length; i++)
     {
         var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] == sParam) 
+        if (sParameterName[0] == sParam)
         {
             return sParameterName[1];
         }
@@ -314,7 +330,7 @@ jQuery(function($) {
  * https://github.com/AceMetrix/jquery-deparam
  *
  * License info for this function is appended to this application's LICENSE file
- * 
+ *
  */
 (function ($) {
   $.deparam = function (params, coerce) {

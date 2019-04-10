@@ -1,28 +1,184 @@
 {% extends 'base.html.twig' %}
 
 {% block page_title %}
-<title>About the Data Catalog</title>
+    <title>About the Data Catalog</title>
 {% endblock %}
 
 {% block page_stylesheets %}
+    <style type="text/css">
+        .static {
+            display: none;
+        }
+
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #000000;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 {% endblock %}
 
 
 {% block page_scripts %}
+    <script src="{{ asset('js/d3.layout.cloud.js') }}"></script>
+    <script src="{{ asset('js/d3.v5.min.js') }}"></script>
+    <script type="text/javascript">
+        setTimeout(function () {
+            if (document.getElementById('status').textContent == 0) {
+                show_static();
+            }
+        }, 30000);
+
+        function show_static() {
+            var i;
+            const static_list = document.getElementsByTagName('svg');
+            for (i = 0; i < static_list.length; i++) {
+                static_list[i].style.display = 'inline';
+            }
+            const loaders = document.getElementsByClassName('loader');
+            for (i = 0; i < loaders.length; i++) {
+                loaders[i].style.display = 'none';
+            }
+            document.getElementById('status').textContent = 1;
+        }
+
+        window.onerror = function () {
+            if (document.getElementById('status').textContent == 0) {
+                show_static();
+            }
+        };
+
+    </script>
+    <script type="text/javascript">
+        const layout = d3.layout.cloud()
+            .size([800, 600])
+            .rotate(0)
+            .padding(1)
+            .font("Impact")
+            .fontSize(d => d.size);
+
+        let json = fetch_data('/api/word_map');
+        json.then((res) => {
+            let keyword_res = res['keywords'];
+            let domain_res = res['domains'];
+            let name_res = res['lastnames'];
+            if (document.getElementById('status').textContent == 0) {
+                const loaders = document.getElementsByClassName('loader');
+                for (let loader of loaders) {
+                    loader.style.display = 'none';
+                }
+                wordmap(get_word_list(keyword_res, 5), '#div1');
+                wordmap(get_word_list(domain_res, 3), '#div2');
+                wordmap(get_word_list(name_res, 4), '#div3');
+                document.getElementById('status').textContent = 1;
+            }
+        });
+
+        function fetch_data(url) {
+            return fetch(url)
+                .then(res => res.json());
+        }
+
+        function get_word_list(res, multiplier) {
+            let words = {};
+            for (let word of res) {
+                if (!words[word]) {
+                    words[word] = 1;
+                } else {
+                    words[word] = words[word] + 1;
+                }
+            }
+            let word_list = [];
+            let max = d3.max(d3.values(words));
+            Object.keys(words).forEach((key) => {
+                word_list.push({text: key, size: words[key] * multiplier});
+                if (words[key] === max) {
+                    console.log(`${key}:${words[key]}`);
+                }
+            });
+            return word_list;
+        }
+
+        function wordmap(word_list, container_id) {
+            layout.words(word_list, container_id)
+                .on("end", () => {
+                    draw(word_list, container_id)
+                })
+                .start();
+        }
+
+        function draw(word_list, container_id) {
+            let colors = d3.scaleOrdinal(d3.schemeCategory10);
+
+            d3.select(container_id).append("svg")
+                .attr("width", layout.size()[0])
+                .attr("height", layout.size()[1])
+                .append("g")
+                .attr("transform", `translate(${layout.size()[0] / 2}, ${layout.size()[1] / 2})`)
+                .selectAll("text")
+                .data(word_list)
+                .enter().append("text")
+                .style("font-size", d => d.size + "px")
+                .style("font-family", "Impact")
+                .attr("text-anchor", "middle")
+                .attr("transform", (d => `translate(${[d.x, d.y]})rotate(${d.rotate})`))
+                .style("fill", d => colors(Math.random() * 10))
+                .style("cursor", "pointer")
+                .text(d => d.text)
+                .on("click", (d) => {
+                    window.location.href = `/search?keyword=${d.text}`;
+                });
+        }
+    </script>
 {% endblock %}
 
 
 {% block content %}
-<div class="col-sm-5 col-sm-offset-2" >
-<div class="page-header">
-<h1>About the Data Catalog</h1>
-</div>
-<p style="font:16px Courier, monospace">
-Content for this page can be customized by copying the template file <strong>"default/about.html.twig"</strong> into <strong>"institution/about.html.twig"</strong> and editing as needed
-</p>
+    <div class="col-sm-5 col-sm-offset-2">
+        <div class="page-header">
+            <h1>About the Data Catalog</h1>
+        </div>
 
-
-</div>
+        <div>
+            <div><p>Subject Keywords</p></div>
+            <div class="loader"></div>
+            <div id="div1">
+                <svg class="static" width="800" height="600">
+                </svg>
+            </div>
+        </div>
+        <br>
+        <div>
+            <div><p>Subject Domains</p></div>
+            <div class="loader"></div>
+            <div id="div2">
+                <svg class="static" width="800" height="600">
+                </svg>
+            </div>
+        </div>
+        <br>
+        <div>
+            <div><p>Surname of Authors</p></div>
+            <div class="loader"></div>
+            <div id="div3">
+                <svg class="static" width="800" height="600">
+                </svg>
+            </div>
+        </div>
+        <div id="status" style="display: none;">0</div>
+    </div>
 
 {% endblock %}
 

@@ -33,43 +33,27 @@ use AppBundle\Entity\Dataset;
 class RelatedDatasetController extends Controller
 {
   /**
-   * Given a list of related datasets, fetch ones that are publicly-visible,
-   * and render a list for display in a dataset record
+   * Return the rendered title and slug of a dataset given an ID
    *
    * @param int|string $id A dataset's UID
    *
    * @return Response A Response instance
    */
-  public function relatedDatasetAction($relatedDatasets) {
+  public function relatedDatasetAction($id) {
 
-    $em = $this->getDoctrine()->getManager()->getRepository('AppBundle:Dataset');;
+    $em = $this->getDoctrine()->getManager();
 
-    $datasetsForDisplay = array();
-    foreach ($relatedDatasets as $related) {
-      // find dataset IF it is published AND not archived
-      $relatedDataset = $em->findOneBy(array(
-                             'dataset_uid' => $related->getRelatedDatasetUid(), 
-                             'published'   => 1,
-                             'archived'    => 0
-                        ));
-      if ($relatedDataset) {
-        $section = array('dataset' => $relatedDataset);
-        $notes = $related->getRelationshipNotes();
-        if ($notes) {
-          $section['relationshipNotes'] = $notes;
-        }
-        $datasetsForDisplay[] = $section;
-      }
-    }
+    $dataset = $em->getRepository('AppBundle:Dataset')
+         ->findOneBy(array('dataset_uid'=>$id));
     
-    if ($datasetsForDisplay) {
-      return $this->render('default/related_dataset_links.html.twig',array(
-                  'relatedDatasets' => $datasetsForDisplay,
-                  ));
-    } else {
-      // return empty response so the "Related Datasets" field will not appear
-      return new Response();
-    } 
+    return $this->render('default/related_dataset_link.html.twig',array(
+                'title' => $dataset->getTitle(),
+                'uid' => $dataset->getDatasetUid(),
+                'slug'=> $dataset->getSlug(),
+                ));
+    
   }
+
+
 
 }

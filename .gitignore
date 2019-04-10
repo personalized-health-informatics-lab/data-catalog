@@ -19,9 +19,6 @@ web/bundles/*
 *.php~
 
 # environment sensitive
-web/.htaccess               # see web/.htaccess.dist
-web/app.php                 # see web/app.php.dist
-web/app_dev.php             # see web/app_dev.php.dist
 app/config/parameters.ini   # see app/config/parameters.ini.dist
 
 #

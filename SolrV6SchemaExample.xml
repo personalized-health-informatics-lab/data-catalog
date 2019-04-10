@@ -465,20 +465,13 @@
   <copyField source="subject_domain" dest="subject_domain_fq"/>
 
   <field name="subject_geographic_area" type="strings"/>
-  <field name="subject_geographic_area_fq" type="string"/>
+  <field name="subject_geographic_area_fq" type="strings"/>
   <copyField source="subject_geographic_area" dest="subject_geographic_area_fq"/>
 
   <field name="subject_geographic_area_details" type="strings"/>
   <field name="subject_keywords" type="strings"/>
   <field name="subject_of_study" type="strings"/>
   <field name="subject_population_ages" type="strings"/>
-  <field name="other_resource_names" type="strings"/>
-  <field name="other_resource_descriptions" type="strings"/>
-  <field name="data_locations" type="strings"/>
-  <field name="data_location_contents" type="strings"/>
-  <field name="accession_numbers" type="strings"/>
-  <field name="publications" type="strings"/>
-  <field name="access_instructions" type="strings"/>
   <dynamicField name="*_txt_en_split_tight" type="text_en_splitting_tight" indexed="true" stored="true"/>
   <dynamicField name="*_descendent_path" type="descendent_path" indexed="true" stored="true"/>
   <dynamicField name="*_ancestor_path" type="ancestor_path" indexed="true" stored="true"/>
@@ -562,4 +555,48 @@
   <dynamicField name="*_p" type="location" indexed="true" stored="true"/>
   <dynamicField name="*_c" type="currency" indexed="true" stored="true"/>
   <copyField source="*" dest="_text_"/>
+
+  <field name="dataset_title_txt" type="text_general" indexed="true" stored="true"/>
+  <copyField source="dataset_title" dest="dataset_title_txt"/>
+  <field name="origin_txt" type="text_general" indexed="true" stored="true"/>
+  <copyField source="origin" dest="origin_txt"/>
+  <field name="description_txt" type="text_general" indexed="true" stored="true" multiValued="true"/>
+  <copyField source="description" dest="description_txt"/>
+  <field name="authors_txt" type="text_general" indexed="true" stored="true" multiValued="true"/>
+  <copyField source="authors" dest="authors_txt"/>
+  <field name="subject_domains_txt" type="text_general" indexed="true" stored="true" multiValued="true"/>
+  <copyField source="subject_domain" dest="subject_domains_txt"/>
+  <field name="subject_keywords_txt" type="text_general" indexed="true" stored="true" multiValued="true"/>
+  <copyField source="subject_keywords" dest="subject_keywords_txt"/>
+  <field name="subject_geographic_area_txt" type="text_general" indexed="true" stored="true" multiValued="true"/>
+  <copyField source="subject_geographic_area" dest="subject_geographic_area_txt"/>
+  <field name="subject_geographic_area_details_txt" type="text_general" indexed="true" stored="true" multiValued="true"/>
+  <copyField source="subject_geographic_area_details" dest="subject_geographic_area_details_txt"/>
+  <field name="subject_of_study_txt" type="text_general" indexed="true" stored="true" multiValued="true"/>
+  <copyField source="subject_of_study" dest="subject_of_study_txt"/>
+
+  <field name="study_purpose" type="string"/>
+  <field name="study_purpose_txt" type="text_general" indexed="true" stored="true"/>
+  <copyField source="study_purpose" dest="study_purpose_txt"/>
+  <field name="model_enrollment" type="int"/>
+  <field name="model_enrollment_num" type="int" indexed="true" stored="true"/>
+  <copyField source="model_enrollment" dest="model_enrollment_num"/>
+  <field name="biospec_descriptions" type="strings"/>
+  <field name="biospec_descriptions_txt" type="text_general" indexed="true" stored="true"/>
+  <copyField source="biospec_descriptions" dest="biospec_descriptions_txt"/>
+  <field name="intervention_descriptions" type="strings"/>
+  <field name="intervention_descriptions_txt" type="text_general" indexed="true" stored="true"/>
+  <copyField source="intervention_descriptions" dest="intervention_descriptions_txt"/>
+  <field name="outcome_measures" type="strings"/>
+  <field name="outcome_measures_txt" type="text_general" indexed="true" stored="true"/>
+  <copyField source="outcome_measures" dest="outcome_measures_txt"/>
+  <field name="outcome_descriptions" type="strings"/>
+  <field name="outcome_descriptions_txt" type="text_general" indexed="true" stored="true"/>
+  <copyField source="outcome_descriptions" dest="outcome_descriptions_txt"/>
+  <field name="brief_descriptions" type="strings"/>
+  <field name="brief_descriptions_txt" type="text_general" indexed="true" stored="true"/>
+  <copyField source="brief_descriptions" dest="brief_descriptions_txt"/>
+  <field name="detail_descriptions" type="strings"/>
+  <field name="detail_descriptions_txt" type="text_general" indexed="true" stored="true"/>
+  <copyField source="detail_descriptions" dest="detail_descriptions_txt"/>
 </schema>

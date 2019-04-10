@@ -133,39 +133,6 @@ http://ryanfait.com/
 }
 
 
-.skip {
-  position: absolute;
-  top: -1000px;
-  left: -1000px;
-  height: 1px;
-  width: 1px;
-  text-align: left;
-  overflow: hidden;
-}
-    
-a.skip:active, 
-a.skip:focus, 
-a.skip:hover {
-  position: relative;
-  left: 0; 
-  top: 0;
-  width: auto; 
-  height: auto; 
-  overflow: visible; 
-  display: block;
-}
-
-#keyword-search-form label {
-  position: absolute;
-  top: -1000px;
-  left: -1000px;
-  height: 1px;
-  width: 1px;
-  text-align: left;
-  overflow: hidden;
-}
-
-
 #content {
 }
 .update-dataset-link {
@@ -610,17 +577,6 @@ a.authors-collapse {
   margin:1em 0em;
 }
 
-/*****************
- * TAK
- * **************/
-
-.tak-expired {
-
-	color: red;
-	margin: 0 1em;
-	font-weight: bold;
-
-}
 
 
 /*****************
@@ -628,7 +584,7 @@ a.authors-collapse {
  * **************/
 #footer {
         background-color: #333;
-        background: url(../img/background_gradient.gif) repeat-x 0 0 #333;
+        /*background: url(../img/background_gradient.gif) repeat-x 0 0 #333;*/
         margin-top:7em;
         clear:both;
         width:100%;

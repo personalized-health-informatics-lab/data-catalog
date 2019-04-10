@@ -6,7 +6,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Form builder for Person Association entry
+ * Form builder for Data Collection Standard entry
  *
  *   This file is part of the Data Catalog project.
  *   Copyright (C) 2016 NYU Health Sciences Library
@@ -25,7 +25,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class PersonAssociationType extends AbstractType {
+class DataCollectionStandardType extends AbstractType {
+
   /**
    * Build the form
    *
@@ -33,38 +34,9 @@ class PersonAssociationType extends AbstractType {
    * @param array $options
    */
   public function buildForm(FormBuilderInterface $builder, array $options) {
-    $builder->add('person', 'entity', array(
-      'class'   => 'AppBundle:Person',
-      'property'=> 'full_name',
-      'choice_value'=>'displayName',
-      'attr'=> array('style'=>'width:50%;', 'class'=>'author-add-form'),
-      'multiple'=> false,
-      'label'   => false,
-    ));
-    $builder->add('display_order', 'number', array(
-      'label' => false,
-      'attr'     => array(
-        'placeholder'=>'* Author Position #',
-        'style'=>'width:50%',
-
-    )));
-    $builder->add('is_corresponding_author', 'checkbox', array(
-      'label'     => 'Corresponding Author',
-      'required'=>false,
-      'attr'      => array(
-      )
-    ));
-    $builder->add('role', 'hidden', array(
-      'label' => false,
-      'required' => false,
-      'data'  => 'Author'
-    ));
-
-
-  }
-
-  public function getName() {
-    return 'personAssociation';
+    $builder->add('measurement_standard_name');
+    $builder->add('measurement_standard_authority');
+    $builder->add('save','submit',array('label'=>'Submit'));
   }
 
   /**
@@ -74,8 +46,13 @@ class PersonAssociationType extends AbstractType {
    */
   public function setDefaultOptions(OptionsResolverInterface $resolver) {
     $resolver->setDefaults(array(
-      'data_class'  => 'AppBundle\Entity\PersonAssociation',
+      'data_class' => 'AppBundle\Entity\DataCollectionStandard'
     ));
   }
 
+  public function getName() {
+    return 'dataCollectionStandard';
+  }
+
 }
+

@@ -1,0 +1,190 @@
+{% extends 'base.html.twig' %}
+
+{% block page_title %}
+    <title>Advanced Search</title>
+{% endblock %}
+
+{% block page_stylesheets %}
+    <style type="text/css">
+        label {
+            font-weight: 400;
+            font-size: 16px;
+        }
+
+        input, select {
+            width: 100%;
+            text-align: left;
+            border-radius: 1px;
+            border: 1px solid #d9d9d9;
+            border-top: 1px solid #c0c0c0;
+            height: 25px;
+            padding: 1px 8px;
+        }
+
+        .inner {
+            display: inline-block;
+            min-width: 167px;
+            width: 16%;
+            font-size: 16px;
+            height: 42px;
+            font-weight: 500;
+            color: #333;
+            vertical-align: middle;
+        }
+
+        .col-sm-3 {
+            float: left;
+            display: inline-block;
+            min-width: 167px;
+            color: #222;
+            line-height: 16px;
+            vertical-align: middle;
+        }
+
+        .col-sm-7 {
+            display: inline-block;
+            min-width: 167px;
+            min-height: 41px;
+            vertical-align: middle;
+        }
+
+        #search-btn {
+            height: 36px;
+            line-height: 27px;
+            -webkit-border-radius: 2px;
+            -webkit-user-select: none;
+            background-color: #f2f2f2;
+            border-radius: 2px;
+            font-weight: bold;
+            margin: 11px 4px;
+            min-width: 54px;
+            padding: 0 16px;
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+
+
+{% block page_scripts %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="col-sm-8 col-sm-offset-2">
+        <div class="page-header">
+            <h1>Advanced Search</h1>
+        </div>
+        <form method="get">
+            <div>
+                <div class="inner">
+                    <span>Find pages with...</span>
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3"><label for="input-title">title</label></div>
+                <div class="col-sm-7">
+                    <input value id="input-title" name="dataset_title_txt" autofocus="autofocus" type="text">
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3"><label for="input-brief-descriptions">brief description</label></div>
+                <div class="col-sm-7">
+                    <input value id="input-brief-descriptions" name="brief_descriptions_txt" type="text">
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3"><label for="input-detail-descriptions">detail description</label></div>
+                <div class="col-sm-7">
+                    <input value id="input-detail-descriptions" name="detail_descriptions_txt" type="text">
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3"><label for="input-origin">origin</label></div>
+                <div class="col-sm-7">
+                    <select id="input-origin" name="origin_txt">
+                        <option disabled selected value="">...</option>
+                        {% if origins %}
+                            {% for origin in origins %}
+                                <option value="{{ origin }}">{{ origin }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3"><label for="input-author">author</label></div>
+                <div class="col-sm-7">
+                    <input value id="input-author" name="authors_txt" type="text">
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3"><label for="input-subject-domains">subject domain</label></div>
+                <div class="col-sm-7">
+                    <input value id="input-subject-domains" name="subject_domains_txt" type="text">
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3"><label for="input-subject-keywords">subject keyword</label></div>
+                <div class="col-sm-7">
+                    <input value id="input-subject-keywords" name="subject_keywords_txt" type="text">
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3"><label for="input-study-purpose">study purpose</label></div>
+                <div class="col-sm-7">
+                    <input value id="input-study-purpose" name="study_purpose_txt" type="text">
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3"><label for="input-outcome-measures">outcome measure</label></div>
+                <div class="col-sm-7">
+                    <input value id="input-outcome-measures" name="outcome_measures_txt" type="text">
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3"><label for="input-outcome-descriptions">outcome description</label></div>
+                <div class="col-sm-7">
+                    <input value id="input-outcome-descriptions" name="outcome_descriptions_txt" type="text">
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3">
+                    <label for="input-intervention-descriptions">intervention description</label>
+                </div>
+                <div class="col-sm-7">
+                    <input value id="input-intervention-descriptions" name="intervention_descriptions_txt" type="text">
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3"><label for="input-biospec-descriptions">biospec description</label></div>
+                <div class="col-sm-7">
+                    <input value id="input-biospec-descriptions" name="biospec_descriptions_txt" type="text">
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3"><label for="input-model-enrollment">enrollment</label></div>
+                <div class="col-sm-7">
+                    <input value id="input-model-enrollment" name="model_enrollment_num" type="number">
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3"><label for="input-geographic-area">geographic area</label></div>
+                <div class="col-sm-7">
+                    <input value id="input-geographic-area" name="subject_geographic_area_txt" type="text">
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3"><label for="input-geographic-detail">geographic-detail</label></div>
+                <div class="col-sm-7">
+                    <input value id="input-geographic-detail" name="subject_geographic_area_details_txt" type="text">
+                </div>
+            </div>
+            <div>
+                <div class="col-sm-3">
+                    <input id="search-btn" value="Search" type="submit">
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+

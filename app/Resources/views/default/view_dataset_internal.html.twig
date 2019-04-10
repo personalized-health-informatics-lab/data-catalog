@@ -1,5 +1,4 @@
 {% extends 'base.html.twig' %}
-{% from 'default/_JSONLD_output.html.twig' import JSONLD_output %}
 
 {% block page_scripts %}
 <script>
@@ -39,7 +38,65 @@ $(function () {
 
 
 {% block JSONLD_output %}
-{{ JSONLD_output(dataset) }}
+{% spaceless %}
+<script type="application/ld+json">
+{"@context": "http://schema.org",
+"@type": "Dataset",
+"name": "{{ dataset.title }}",
+"description": "{{ dataset.description }}",
+"dateCreated": "{{ dataset.dateAdded|date("Y-m-d") }}",
+"alternateName": [{% for title in dataset.datasetAlternateTitles %}"{{ title.getDisplayName|trim }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+"keywords": [{% for kw in dataset.subjectKeywords %}"{{ kw.getDisplayName|trim }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+"author": [{% for auth in dataset.authors %}
+{
+      "@type": "Person",
+      "name":"{{ auth.fullName }}",
+      "url":"{{ auth.bioUrl }}"}{% if not loop.last %}, {% endif %}{% endfor %}],
+  "citation": [{% for pub in dataset.publications %}"{{ pub.citation|trim }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+  "encoding": [{% for format in dataset.datasetFormats %}
+{
+      "@type": "MediaObject",
+      "encodingFormat":"{{ format.getDisplayName }}"
+      }{% if not loop.last %}, {% endif %}{% endfor %}],
+  "publisher": [{% for pubber in dataset.publishers %}
+{
+      "@type": "Organization",
+      "name":"{{ pubber.getDisplayName }}",
+      "url":"{{ pubber.publisherUrl }}"}{% if not loop.last %}, {% endif %}{% endfor %}],
+"mainEntityOfPage": "{{ app.request.uri }}",
+"url": "{{ app.request.uri }}",
+"isPartOf":
+{
+"@type": "DataCatalog",
+"name": "{{ site_name }}",
+"keywords":"science, dataset, research, data, data catalog",
+"url": "{{ site_base_url }}",
+"provider": {
+  "@type":"Organization",
+  "name":"{{ site_provider_name }}",
+  "url":"{{ site_provider_url }}",
+  "parentOrganization": {
+    "@type":"Organization",
+    "name": "{{ institution_name }}",
+    "address":"{{ institution_address }}",
+    "url":"{{ institution_url }}"
+   }
+ }
+},
+"provider": {
+  "@type":"Organization",
+  "name":"{{ site_provider_name }}",
+  "url":"{{ site_provider_url }}",
+  "parentOrganization": {
+    "@type":"Organization",
+    "name": "{{ institution_name }}",
+    "address":"{{ institution_address }}",
+    "url":"{{ institution_url }}"
+   }
+}
+}
+</script>
+{% endspaceless %}
 {% endblock %}
 
 
@@ -149,10 +206,7 @@ $(function () {
      <dt>Description</dt>
        <dd>{{ dataset.description|raw }}</dd>
      
-      {% if dataset.subjectStartDate is not empty and dataset.subjectStartDate == dataset.subjectEndDate %}
-      <dt>Timeframe</dt>
-       <dd>{{ dataset.subjectStartDate }}</dd>
-      {% elseif dataset.subjectStartDate is not empty %}
+      {% if dataset.subjectStartDate is not empty %}
       <dt>Timeframe</dt>
        <dd>{{ dataset.subjectStartDate }} - {{ dataset.subjectEndDate }}</dd>
       {% endif %} 
@@ -304,7 +358,7 @@ $(function () {
        <dt>Data Type</dt>
        <dd>
       {% for type in dataset.dataTypes %}
-        <div class="multiple-item-list"><a href="/search?keyword=data_types:{{ type.getDisplayName }}">{{ type.getDisplayName }}</a></div>
+        <div class="multiple-item-list">{{ type.getDisplayName }}</div>
       {% endfor %}
       </dd>
       {% endif %}
@@ -363,11 +417,11 @@ $(function () {
        </dd>
       {% endif %}
 
-      {% if (dataset.dataCollectionInstruments.count > 0) %}
-       <dt>Data Collection Instruments</dt>
+      {% if (dataset.dataCollectionStandards.count > 0) %}
+       <dt>Data Collection Standards</dt>
          <dd>
-      {% for instrument in dataset.dataCollectionInstruments %}
-        <div class="multiple-item-list">{{ instrument.getDisplayName }}</div>
+      {% for standard in dataset.dataCollectionStandards %}
+        <div class="multiple-item-list">{{ standard.getDisplayName }}</div>
       {% endfor %}
          </dd>
       {% endif %}
@@ -410,8 +464,22 @@ $(function () {
        {% endif %}
 
        {% if (dataset.relatedDatasets.count > 0) %}
-         {{ render(controller('AppBundle:RelatedDataset:relatedDataset',{'relatedDatasets':dataset.relatedDatasets})) }}
-       {% endif %}
+       <dt>Related Datasets</dt>
+        <dd id="related-datasets">
+         {% for related in dataset.relatedDatasets %}
+          <div class="multiple-item-list">
+           {{ render(controller('AppBundle:RelatedDataset:relatedDataset',{'id':related.relatedDatasetUid})) }}
+           {% if related.relationshipNotes %}
+           <p class="related-dataset-note">{{ related.relationshipNotes }}</p>
+           {% endif %}
+          </div>
+         {% endfor %}
+       </dd>
+         {% if (related.relationshipNotes is defined) %}
+         <dt>Related Dataset - Note</dt>
+         <dd>{{ related.relationshipNotes }}</dd>
+         {% endif %}
+     {% endif %}
      </dl>
     </div>
   </div>

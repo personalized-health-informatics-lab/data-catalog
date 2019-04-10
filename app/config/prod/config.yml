@@ -40,6 +40,9 @@ doctrine:
         result_cache_driver: apc
         auto_mapping: true
         query_cache_driver: apc
+        auto_generate_proxy_classes: true
+        proxy_dir: '%kernel.cache_dir%/doctrine/orm/Proxies'
+        proxy_namespace: Proxies
 
 monolog:
     handlers:
